@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json()); // Parse JSON data
 
 // Routes
 app.use('/api/auth', userRoutes);
+app.use('/api', blogRoutes)
 
 // Test route
 app.get('/', (req, res) => {
