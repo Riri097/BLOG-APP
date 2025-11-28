@@ -11,9 +11,9 @@ const blogSchema = new mongoose.Schema({
         trim : true,
         required : true,
     },
-    draft : {
+    isPublic : {
         type : Boolean,
-        default : false,
+        default : true,
     },
 }, { timestamps : true }
 )

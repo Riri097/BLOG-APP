@@ -3,10 +3,10 @@ const { createBLog, getBLogs, getBLog, updateBLog, deleteBLog } = require('../co
 const router = express.Router();
 
 router.post('/blogs', createBLog);
-
 router.get('/blogs', getBLogs);
-router.get('/blog/:id', getBLog);
-router.patch('/blog/:id', updateBLog);
-router.delete('/blog/:id', deleteBLog);
+router.get('/blogs/:id', getBLog);
+router.patch('/blogs/:id', updateBLog);
+router.delete('/blogs/:id', deleteBLog);
+
 module.exports = router;
 

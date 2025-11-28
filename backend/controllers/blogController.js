@@ -3,13 +3,13 @@ const { Blog } = require('../models/blogModel');
 // Create a new blog
 async function createBLog(req, res){
     try{
-        const { title, content } = req.body;
+        const { title, content, isPublic } = req.body;
          if (!title || !content) {
             return res.status(400).json({
                 message : "Title and Content are required"
             })
          }
-        const blog = await Blog.create({title, content,});
+        const blog = await Blog.create({title, content, isPublic});
         return res.status(201).json({
             message : "Blog created successfully",
             blog,
@@ -25,7 +25,7 @@ async function createBLog(req, res){
 async function getBLogs(req, res){
     try {
         // Blog.find() is like doing SELECT * FROM blogs
-        const blogs = await Blog.find({});
+        const blogs = await Blog.find({isPublic: true}); // Only fetch public blogs
         res.status(200).json(blogs);
     }catch(error){
         res.status(500).json({message: error.message});
@@ -67,7 +67,7 @@ async function updateBLog(req, res){
 // Delete a blog by ID
 async function deleteBLog(req, res){
     try{
-        
+
         const {id} = req.params;
         const blog = await Blog.findByIdAndDelete(id);
         if (!blog){
