@@ -11,6 +11,11 @@ const blogSchema = new mongoose.Schema({
         trim : true,
         required : true,
     },
+     user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true
+    },
     isPublic : {
         type : Boolean,
         default : true,

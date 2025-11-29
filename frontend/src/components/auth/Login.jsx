@@ -1,85 +1,84 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
+import Button from '../ui/Button'; 
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  
+  // Get the login function from our Context
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Handle typing
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     try {
-      await login(formData.email, formData.password);
+      // Call the Backend
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      // Check for errors
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Success! Tell Context to save the user
+      login(data.user, data.token);
+
+      //  Go to Dashboard
       navigate('/dashboard');
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
-        Welcome Back
-      </h2>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        
+        {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
 
-      {error && (
-        <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <Input
-          label="Email"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="you@example.com"
-          required
-        />
-
-        <Input
-          label="Password"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="••••••••"
-          required
-        />
-
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
-      </form>
-
-      <p className="text-center mt-4 text-gray-600 dark:text-gray-400">
-        Don't have an account?{' '}
-        <Link to="/signup" className="text-blue-600 dark:text-blue-400 hover:underline">
-          Sign up
-        </Link>
-      </p>
-    </Card>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          <Button type="submit" className="w-full">Login</Button>
+        </form>
+        
+        <p className="mt-4 text-center text-sm">
+          New here? <Link to="/signup" className="text-blue-600">Sign up</Link>
+        </p>
+      </div>
+    </div>
   );
 };
 

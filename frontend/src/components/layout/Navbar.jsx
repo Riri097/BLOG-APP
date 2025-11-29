@@ -17,7 +17,7 @@ const Navbar = () => {
         
         {/* Logo */}
         <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold text-blue-600">
+          <Link to="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
             BlogApp
           </Link>
         </div>
@@ -28,9 +28,18 @@ const Navbar = () => {
           {/* Auth Buttons */}
           {user ? (
             <div className="flex items-center gap-4">
-              <span className="hidden text-sm font-medium text-gray-700 sm:block">
-                {user.name}
+              {/* Link to Dashboard */}
+              <Link to="/dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition">
+                Dashboard
+              </Link>
+
+              {/* Vertical Separator Line */}
+              <div className="h-5 w-px bg-gray-300 hidden sm:block"></div>
+
+              <span className="hidden text-sm font-medium text-gray-900 sm:block">
+                Hi, {user.name}
               </span>
+              
               <Button onClick={handleLogout} variant="secondary" className="text-sm">
                 Logout
               </Button>
