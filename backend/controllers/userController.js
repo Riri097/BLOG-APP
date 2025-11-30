@@ -90,4 +90,48 @@ const getMe = async (req, res) => {
     }
 }
 
-module.exports = { signup, login, getMe };
+// 4. Update User Account
+const updateAccount = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        
+        // req.userId comes from your middleware (the token)
+        // { new: true } means "give me back the updated user, not the old one"
+        const updatedUser = await User.findByIdAndUpdate(
+            req.userId, 
+            { name, email },
+            { new: true, runValidators: true }
+        ).select('-password'); // Don't send back the password
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            message: "Profile updated successfully",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// 5. Delete User Account
+const deleteAccount = async (req, res) => {
+    try {
+        // Find user by ID and delete
+        const deletedUser = await User.findByIdAndDelete(req.userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ message: "Account deleted successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+module.exports = { signup, login, getMe, updateAccount, deleteAccount };
