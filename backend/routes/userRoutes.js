@@ -6,7 +6,7 @@ const userController = require('../controllers/userController');
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.get('/me', userMiddleware, userController.getMe);
-router.put('/update', userMiddleware, userController.updateAccount); // PUT is for updating
-router.delete('/delete', userMiddleware, userController.deleteAccount); // DELETE is for deleting
+router.put('/update', userMiddleware, userController.updateAccount); 
+router.delete('/delete', userMiddleware, userController.deleteAccount); 
 
 module.exports = router;

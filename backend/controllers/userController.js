@@ -90,7 +90,7 @@ const getMe = async (req, res) => {
     }
 }
 
-// 4. Update User Account
+// Update User Account
 const updateAccount = async (req, res) => {
     try {
         const { name, email } = req.body;
@@ -117,7 +117,7 @@ const updateAccount = async (req, res) => {
     }
 };
 
-// 5. Delete User Account
+// Delete User Account
 const deleteAccount = async (req, res) => {
     try {
         // Find user by ID and delete
