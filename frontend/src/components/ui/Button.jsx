@@ -11,16 +11,16 @@ const Button = ({
   
   // Styles for different button types
   const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-md",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-white",
-    ghost: "bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+    primary: "bg-primary text-primary hover:opacity-90 shadow-md",
+    secondary: "bg-accent text-white hover:opacity-90 shadow-sm",
+    ghost: "bg-transparent text-text hover:bg-gray-200",
     danger: "bg-red-500 text-white hover:bg-red-600",
   };
 
   return (
     <button
       type={type}
-      onClick={onClick} // <--- THIS IS CRUCIAL!
+      onClick={onClick} 
       disabled={disabled}
       className={`
         px-4 py-2 rounded-lg font-medium transition-all duration-200 active:scale-95

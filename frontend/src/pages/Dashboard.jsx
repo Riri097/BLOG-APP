@@ -1,32 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. FETCH POSTS WHEN PAGE LOADS
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem('token');
-        // Make sure this matches your backend route for getting posts
         const response = await fetch('http://localhost:5000/api/blogs', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+
+        //this checks if token is invalid or expired
+        if (response.status === 401) {
+          alert("Session expired. Please login again.");
+          logout(); 
+          navigate('/login');
+          return;
+        }
         
         const data = await response.json();
-        
-        if (response.ok) {
-          // Assuming backend returns an array of posts
-          setPosts(data); 
-        }
+        if (response.ok) setPosts(data);
+
       } catch (error) {
         console.error("Failed to fetch posts", error);
       } finally {
@@ -44,19 +49,19 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
+            <h1 className="text-3xl font-bold text-dark">My Dashboard</h1>
             <p className="text-gray-600">Welcome back, {user?.name}!</p>
           </div>
           <Link to="/create-post">
-            <Button variant="primary">+ Create New Post</Button>
+            <Button variant="secondary">+ Create New Post</Button>
           </Link>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 border-l-4 border-blue-500">
-            <h3 className="text-gray-500 text-sm font-medium">Total Posts</h3>
-            <p className="text-3xl font-bold text-gray-900">{posts.length}</p>
+          <Card className="p-6 border-l-4 border-[#005519da]">
+            <h3 className="text-text text-sm font-medium">Total Posts</h3>
+            <p className="text-3xl font-bold text-text">{posts.length}</p>
           </Card>
         </div>
 
@@ -70,7 +75,6 @@ const Dashboard = () => {
             <div className="p-10 text-center text-gray-500">Loading posts...</div>
           ) : posts.length === 0 ? (
             <div className="p-10 text-center">
-              <div className="text-5xl mb-4">📝</div>
               <h3 className="text-xl font-medium text-gray-900">No posts yet</h3>
               <Link to="/create-post" className="mt-4 inline-block">
                 <Button variant="secondary">Write your first post</Button>

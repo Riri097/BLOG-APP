@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .bg-primary {
+    background-color: #5fbd99e5 !important;
+  }
+  .text-primary {
+    color: #ffffff !important;
+  }
+  
+  .bg-accent {
+    background-color: #005519da !important;
+  }
+  
+  .bg-background {
+    background-color: #F3F6F9 !important;
+  }
+  
+  .text-text {
+    color: #2D3748 !important;
+  }
+  .text-dark {
+    color: #005519da !important;
+  }
+}

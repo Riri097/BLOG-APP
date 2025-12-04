@@ -9,7 +9,11 @@ async function createBLog(req, res){
                 message : "Title and Content are required"
             })
          }
-        const blog = await Blog.create({title, content, isPublic});
+        const blog = await Blog.create({
+            title,
+            content, 
+            isPublic,
+            user : req.userId,});
         return res.status(201).json({
             message : "Blog created successfully",
             blog,
@@ -80,10 +84,49 @@ async function deleteBLog(req, res){
  
 }
 
+// Toggle like/unlike
+const toggleLike = async(req, res) => {
+    try{
+        const blog = await Blog.findById(req.params.id);
+        
+        if (blog.likes.includes(req.userId)){
+            blog.likes = blog.likes.filter(id=> id.toString() !== req.userId);
+
+        }else{
+            blog.likes.push(req.userId);
+        }
+        await blog.save();
+        res.json(blog);
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
+
+const addComment = async(req,res) =>{
+    try{
+        const blog = await Blog.findById(req.params.id);
+
+        const newComment ={
+            user : req.userId,
+            text : req.body.text
+        }
+
+        blog.comments.push(newComment);
+        await blog.save();
+
+        res.json(blog);
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
+
+
 module.exports = {
     createBLog,
     getBLogs,
     getBLog,
     updateBLog,
     deleteBLog,
+    toggleLike,
+    addComment,
 }
