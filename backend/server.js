@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -18,9 +19,12 @@ connectDB();
 app.use(cors()); // Allow frontend to talk to backend
 app.use(express.json()); // Parse JSON data
 
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', userRoutes);
-app.use('/api', blogRoutes)
+app.use('/api/blogs', blogRoutes)
 
 // Test route
 app.get('/', (req, res) => {

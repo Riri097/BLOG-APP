@@ -9,11 +9,15 @@ async function createBLog(req, res){
                 message : "Title and Content are required"
             })
          }
+        const image = req.file ? `/uploads/${req.file.filename}` : "";
+
         const blog = await Blog.create({
             title,
             content, 
             isPublic,
-            user : req.userId,});
+            user : req.userId,
+            image: image,
+        });
         return res.status(201).json({
             message : "Blog created successfully",
             blog,
@@ -29,7 +33,12 @@ async function createBLog(req, res){
 async function getBLogs(req, res){
     try {
         // Blog.find() is like doing SELECT * FROM blogs
-        const blogs = await Blog.find({isPublic: true}); // Only fetch public blogs
+        //populate gets user details from user collection
+        // sort by new to old blogs
+        const blogs = await Blog.find({isPublic: true})
+        .populate('user', 'name')
+        .sort({ createdAt: -1 });
+
         res.status(200).json(blogs);
     }catch(error){
         res.status(500).json({message: error.message});
@@ -41,7 +50,10 @@ async function getBLog(req, res){
     try {
         // req.params.id stores the ID from the URL
         const {id} = req.params;
-        const blog = await Blog.findById(id);
+        const blog = await Blog.findById(id)
+        .populate('user', 'name')
+        .populate('comments.user', 'name'); 
+
         if (!blog){
             return res.status(404).json({message:'Blog not found'});
         }
@@ -62,6 +74,8 @@ async function updateBLog(req, res){
         if (!blog){
             return res.status(404).json({message: 'Blog not found'})
         }
+
+        res.json(blog); 
 
     }catch(error){
         res.status(500).json({message: error.message})
@@ -85,26 +99,37 @@ async function deleteBLog(req, res){
 }
 
 // Toggle like/unlike
-const toggleLike = async(req, res) => {
-    try{
+const toggleLike = async (req, res) => {
+    try {
         const blog = await Blog.findById(req.params.id);
-        
-        if (blog.likes.includes(req.userId)){
-            blog.likes = blog.likes.filter(id=> id.toString() !== req.userId);
+        if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-        }else{
+        // Check if already liked
+        const isLiked = blog.likes.includes(req.userId);
+
+        if (isLiked) {
+            // Unlike: Remove user ID from array
+            blog.likes = blog.likes.filter(id => id.toString() !== req.userId);
+        } else {
+            // Like: Add user ID to array
             blog.likes.push(req.userId);
         }
+
         await blog.save();
+        await blog.populate('user', 'name'); 
         res.json(blog);
-    }catch(error){
-        res.status(500).json({message: error.message})
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 const addComment = async(req,res) =>{
     try{
         const blog = await Blog.findById(req.params.id);
+
+        if (!blog) return res.status(404).json({ message: "Blog not found" });
+        if (!req.body.text) return res.status(400).json({ message: "Comment text is required" });
 
         const newComment ={
             user : req.userId,
@@ -113,6 +138,9 @@ const addComment = async(req,res) =>{
 
         blog.comments.push(newComment);
         await blog.save();
+        await blog.populate('user', 'name');
+        await blog.populate('comments.user', 'name');
+        
 
         res.json(blog);
     }catch(error){
@@ -120,6 +148,38 @@ const addComment = async(req,res) =>{
     }
 }
 
+const deleteComment = async (req, res) => {
+    try {
+        const blogId = req.params.id;
+        const commentId = req.params.commentId;
+
+        const blog = await Blog.findById(blogId);
+        const comment = blog.comments.find(c => c._id.toString() === commentId);
+
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        // convert IDs to String to compare them easily
+        const isMyComment = comment.user.toString() === req.userId;
+        const isMyBlog = blog.user.toString() === req.userId;
+
+        // If it's NOT my comment AND it's NOT my blog... stop!
+        if (!isMyComment && !isMyBlog) {
+            return res.status(401).json({ message: "You are not allowed to delete this." });
+        }
+
+        // Logic: "Keep all comments where the ID is NOT the one we want to delete"
+    // filter creates a new array with only the comments that pass the test
+        blog.comments = blog.comments.filter(c => c._id.toString() !== commentId);
+
+        await blog.save();
+
+        res.json({ message: "Comment deleted!" });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 module.exports = {
     createBLog,
@@ -129,4 +189,5 @@ module.exports = {
     deleteBLog,
     toggleLike,
     addComment,
+    deleteComment,
 }

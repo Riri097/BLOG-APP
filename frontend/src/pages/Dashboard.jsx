@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+
+// 1. IMPORT THE BLOG CARD
+import BlogCard from '../components/blog/BlogCard'; 
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -16,14 +18,10 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:5000/api/blogs', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        //this checks if token is invalid or expired
         if (response.status === 401) {
-          alert("Session expired. Please login again.");
           logout(); 
           navigate('/login');
           return;
@@ -40,7 +38,7 @@ const Dashboard = () => {
     };
 
     fetchPosts();
-  }, []); // Empty array means "run once on load"
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -65,32 +63,21 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Recent Posts List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800">Your Recent Posts</h2>
-          </div>
+        {/* 2. BLOG GRID SECTION (Replaced the old list) */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">Latest Stories</h2>
 
           {loading ? (
-            <div className="p-10 text-center text-gray-500">Loading posts...</div>
+            <div className="text-center py-10">Loading...</div>
           ) : posts.length === 0 ? (
-            <div className="p-10 text-center">
-              <h3 className="text-xl font-medium text-gray-900">No posts yet</h3>
-              <Link to="/create-post" className="mt-4 inline-block">
-                <Button variant="secondary">Write your first post</Button>
-              </Link>
+            <div className="text-center py-10 bg-white rounded-lg border">
+              <p>No posts yet.</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
-              {/* 2. MAP THROUGH THE POSTS */}
+            // GRID LAYOUT: 1 column on mobile, 2 on tablet, 3 on desktop
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <div key={post._id} className="p-6 hover:bg-gray-50 transition">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{post.content}</p>
-                  <div className="text-sm text-gray-400">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
+                <BlogCard key={post._id} blog={post} />
               ))}
             </div>
           )}
