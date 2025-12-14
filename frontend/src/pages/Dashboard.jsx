@@ -28,6 +28,11 @@ const Dashboard = () => {
         }
         
         const data = await response.json();
+
+// --- ADD THIS LINE ---
+console.log("Fetched Posts Data:", data); 
+// --------------------
+
         if (response.ok) setPosts(data);
 
       } catch (error) {

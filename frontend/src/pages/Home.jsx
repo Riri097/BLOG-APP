@@ -1,83 +1,92 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/Button';
+// 1. Import the icons
+import { FiGlobe, FiImage, FiMessageSquare } from 'react-icons/fi';
 
 const Home = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-900 transition-colors">
-
+    <div className="min-h-screen bg-background">
+      <Navbar />
       
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-24">
         <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-            Welcome to TaskMaster
+          <h1 className="text-5xl font-bold mb-6 text-dark leading-tight">
+            Share Your Story with the World
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Your ultimate productivity companion. Organize your tasks, boost your efficiency, 
-            and achieve your goals with our simple yet powerful task management system.
+          <p className="text-xl text-gray-600 mb-10 leading-relaxed">
+            A simple, beautiful place to write, read, and connect. 
+            Whether you have a daily journal or a big idea, StorySpace is your home.
           </p>
           
           {user ? (
             <Link to="/dashboard">
-              <Button className="text-lg px-8 py-3">
-                Go to Dashboard
+              <Button className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all bg-primary text-white">
+                Start Reading & Writing
               </Button>
             </Link>
           ) : (
             <div className="flex gap-4 justify-center">
               <Link to="/signup">
-                <Button className="text-lg px-8 py-3">
-                  Get Started
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="outline" className="text-lg px-8 py-3">
-                  Login
+                <Button className="text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all bg-primary text-white">
+                  Start Writing for Free
                 </Button>
               </Link>
             </div>
           )}
         </div>
 
-        {/* Features Section */}
-        <div className="grid md:grid-cols-3 gap-8 mt-20">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 text-4xl mb-4">📝</div>
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-              Easy Task Management
+        {/* Features Section - Blog Themed */}
+        <div className="grid md:grid-cols-3 gap-8 mt-24">
+          
+          {/* Feature 1 */}
+          <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
+            {/* Icon Container */}
+            <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+              <FiGlobe className="text-primary text-2xl group-hover:text-white transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-dark">
+              Global Community
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Create, organize, and track your tasks with an intuitive interface.
+            <p className="text-gray-600">
+              Connect with readers and writers from around the globe. Share your unique perspective.
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 text-4xl mb-4">🔒</div>
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-              Secure & Private
+          {/* Feature 2 */}
+          <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
+            <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+              <FiImage className="text-primary text-2xl group-hover:text-white transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-dark">
+              Rich Media
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Your data is encrypted and stored securely. Only you can access your tasks.
+            <p className="text-gray-600">
+              Bring your stories to life with beautiful cover images and clean typography.
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 text-4xl mb-4">🌙</div>
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-              Dark Mode
+          {/* Feature 3 */}
+          <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
+            <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+              <FiMessageSquare className="text-primary text-2xl group-hover:text-white transition-colors" />
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-dark">
+              Engage & Discuss
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Work comfortably in any lighting condition with our dark mode support.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+            <p className="text-gray-600">
+              Like posts and leave comments to start meaningful conversations with authors.
+</p>
+</div>
+   </div>
+  </div>
+</div>
+);
 };
 
 export default Home;

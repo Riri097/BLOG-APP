@@ -3,6 +3,9 @@ const { Blog } = require('../models/blogModel');
 // Create a new blog
 async function createBLog(req, res){
     try{
+        console.log("1. Body:", req.body);
+        console.log("2. File:", req.file); 
+        
         const { title, content, isPublic } = req.body;
          if (!title || !content) {
             return res.status(400).json({

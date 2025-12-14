@@ -30,7 +30,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-72 h-screen bg-primary flex flex-col py-8 pr-4 sticky top-0 ">
+    <aside className="w-full h-full bg-primary flex flex-col py-8 pr-4">
 
       <div 
         onClick={() => navigate('/profile')}

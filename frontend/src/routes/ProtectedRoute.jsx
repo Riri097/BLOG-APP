@@ -5,13 +5,12 @@ import { useAuth } from "../hooks/useAuth";
 
 
 const ProtectedRoute = ({ children }) => {
-    const {user, loading} = useAuth();
+  const { user, loading } = useAuth();
+  
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
 
-    if (loading){
-        return <div className="p-10 text-center">Loading...</div>;
-    }
-
-    return user ? <Layout> {children}</Layout> : <Navigate to = "/login" />
-} 
+  return children; 
+};
 export default ProtectedRoute;
 

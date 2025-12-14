@@ -1,43 +1,38 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Button from '../ui/Button'; // Assuming you have this, or use standard <button>
+import Button from '../ui/Button'; 
 
 const Navbar = () => {
   const { user } = useAuth();
 
   return (
-    <nav className="w-full bg-primary border-b border-gray-200 px-6 py-3 flex justify-between items-center">
+    <nav className="w-full bg-primary border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-50">
       
-      {/* 1. The Logo (Visible to everyone) */}
-      <Link to="/" className="text-2xl font-bold text-primary">
-        BlogApp
+      {/* 1. Logo - Uses your theme color */}
+      <Link to="/" className="text-2xl font-bold text-dark flex items-center gap-2">
+        <span>StoryBlog</span>
       </Link>
 
-      {/* 2. The Actions (Changes based on login) */}
+      {/* 2. Actions */}
       <div>
         {user ? (
-          // --- OPTION A: USER IS LOGGED IN ---
-          // We don't need much here because the Sidebar has the links.
-          // Let's just show a friendly greeting.
           <div className="flex items-center gap-4">
-            <span className="text-gray-600 font-medium">
-              Hi, {user.name} 
+            <span className="text-gray-600 hidden md:block text-sm">
+              Hi, {user.name}
             </span>
-            {/* We don't need a Logout button here because it's in the Sidebar now! */}
+            <Link to="/dashboard">
+              <Button variant="primary">
+                Go to Dashboard
+              </Button>
+            </Link>
           </div>
         ) : (
-          // --- OPTION B: GUEST (NOT LOGGED IN) ---
           <div className="flex items-center gap-4">
             <Link to="/login">
-              <button className="text-gray-600 hover:text-blue-600 font-medium">
-                Log in
-              </button>
+              <Button variant="ghost">Log in</Button>
             </Link>
-            
             <Link to="/signup">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                Get Started
-              </button>
+              <Button variant="primary">Sign up</Button>
             </Link>
           </div>
         )}
