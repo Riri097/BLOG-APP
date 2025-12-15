@@ -1,68 +1,55 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiHeart, FiMessageSquare, FiUser } from 'react-icons/fi';
+import { useAuth } from '../../hooks/useAuth';
+import ActionButtons from './ActionButtons'; // <--- Import the new component
 
-const BlogCard = ({ blog }) => {
+const BlogCard = ({ blog, onDelete }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Safe ID Comparison
+  const currentUserId = (user?._id || user?.id)?.toString();
+  const postAuthorId = (blog.user?._id || blog.user)?.toString();
+  const isMyPost = currentUserId && postAuthorId && currentUserId === postAuthorId;
 
   return (
     <div 
       onClick={() => navigate(`/blog/${blog._id}`)}
-      className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition border border-gray-100"
+      className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition border border-gray-100 flex flex-col h-full group"
     >
-      
-      {/* 1. IMAGE SECTION */}
-      {/* Only render this part if blog.image exists */}
+      {/* ... Image Section (Keep as is) ... */}
       {blog.image && (
-        <div className="h-48 w-full">
-          <img 
-            src={`http://localhost:5000${blog.image}`} 
-            alt={blog.title} 
-            className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.style.display = 'none'; // Hide if broken
-                console.log("Image failed to load:", `http://localhost:5000${blog.image}`);
-            }}
-          />
+        <div className="h-48 w-full overflow-hidden">
+          <img src={`http://localhost:5000${blog.image}`} alt={blog.title} className="w-full h-full object-cover" />
         </div>
       )}
 
-      {/* 2. CONTENT SECTION */}
-      <div className="p-5">
-        
-        {/* Author & Date */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-          <FiUser className="text-primary" />
-          <span>{blog.user ? blog.user.name : "Unknown"}</span>
-          <span>•</span>
-          <span>{new Date(blog.createdAt).toDateString()}</span>
-        </div>
+      <div className="p-5 flex flex-col flex-grow">
+        {/* ... Title & Content (Keep as is) ... */}
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{blog.title}</h3>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{blog.content}</p>
 
-        {/* Title */}
-        <h3 className="text-xl font-bold text-gray-800 mb-2">
-          {blog.title}
-        </h3>
-
-        {/* Content Preview (First 100 letters) */}
-        <p className="text-gray-600 text-sm mb-4">
-          {blog.content.substring(0, 100)}...
-        </p>
-
-        {/* Footer: Likes & Comments */}
-        <div className="flex items-center gap-4 text-gray-400 text-sm pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-1">
-            <FiHeart /> 
-            <span>{blog.likes.length}</span>
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+          
+          {/* Left: Stats */}
+          <div className="flex gap-4 text-gray-500 text-sm">
+             <span className="flex items-center gap-1"><FiHeart /> {blog.likes?.length || 0}</span>
+             <span className="flex items-center gap-1"><FiMessageSquare /> {blog.comments?.length || 0}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <FiMessageSquare /> 
-            <span>{blog.comments.length}</span>
-          </div>
-        </div>
 
+          {/* Right: Actions - LOOK HOW CLEAN THIS IS NOW! */}
+          <ActionButtons 
+            isOwner={isMyPost} 
+            blogId={blog._id} 
+            onDelete={onDelete} 
+          />
+
+        </div>
       </div>
     </div>
-    );
+  );
 };
 
 export default BlogCard;

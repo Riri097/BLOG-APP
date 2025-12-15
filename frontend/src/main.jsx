@@ -1,15 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom' // Move Router here
-import { AuthProvider } from './context/AuthContext' // Move Auth here
+import { BrowserRouter } from 'react-router-dom' 
+import { AuthProvider } from './context/AuthContext' 
 import App from './App.jsx'
 import './index.css'
+import { Toaster } from 'react-hot-toast'; 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
 
     <BrowserRouter>
       <AuthProvider>
+        <Toaster position="bottom-right" reverseOrder={false} />
         <App />
       </AuthProvider>
     </BrowserRouter>

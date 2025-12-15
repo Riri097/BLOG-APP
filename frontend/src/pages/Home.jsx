@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/Button';
-// 1. Import the icons
+
 import { FiGlobe, FiImage, FiMessageSquare } from 'react-icons/fi';
 
 const Home = () => {
@@ -12,8 +12,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
+
       <div className="container mx-auto px-4 py-24">
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-5xl font-bold mb-6 text-dark leading-tight">
@@ -41,12 +40,10 @@ const Home = () => {
           )}
         </div>
 
-        {/* Features Section - Blog Themed */}
         <div className="grid md:grid-cols-3 gap-8 mt-24">
-          
-          {/* Feature 1 */}
+
           <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
-            {/* Icon Container */}
+
             <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
               <FiGlobe className="text-primary text-2xl group-hover:text-white transition-colors" />
             </div>
@@ -58,7 +55,6 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Feature 2 */}
           <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
             <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
               <FiImage className="text-primary text-2xl group-hover:text-white transition-colors" />
@@ -71,7 +67,7 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Feature 3 */}
+
           <div className="bg-primary p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition group">
             <div className="w-14 h-14 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
               <FiMessageSquare className="text-primary text-2xl group-hover:text-white transition-colors" />

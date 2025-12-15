@@ -13,7 +13,7 @@ const Sidebar = () => {
     { path: '/profile', name: 'My Profile', icon: <FiUser size={20} /> },
     { path: '/dashboard', name: 'Dashboard', icon: <FiHome size={20} /> },
     { path: '/create-post', name: 'Write Story', icon: <FiEdit size={20} /> },
-    { path: '/my-posts', name: 'My Posts', icon: <FiFileText size={20} /> },
+    { path: '/feed', name: 'My Feed', icon: <FiFileText size={20} /> },
   ];
 
   const handleLogout = () => {

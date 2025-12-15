@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -32,8 +33,10 @@ const Signup = () => {
 
       // Check if request was successful
       if (!response.ok) {
-        throw new Error(data.message || 'Signup failed');
+        toast.error(data.message || 'Signup failed');
+        return;
       }
+      toast.success('Account created successfully!');
       // if successful, log the user in immediately
       login(data.user, data.token);
       navigate('/dashboard');

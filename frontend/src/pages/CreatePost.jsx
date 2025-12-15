@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import toast from 'react-hot-toast';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -42,13 +43,12 @@ const CreatePost = () => {
         body: formData, // Send the envelope
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create post');
+       if (response.ok) {
+        toast.success('Blog published successfully!'); // <--- Success!
+        navigate('/dashboard');
+      } else {
+        toast.error('Failed to publish blog'); // <--- Error
       }
-
-      navigate('/dashboard');
 
     } catch (err) {
       setError(err.message);

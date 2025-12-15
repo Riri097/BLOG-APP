@@ -1,5 +1,5 @@
 const express = require('express');
-const { createBLog, getBLogs, getBLog, updateBLog, deleteBLog, toggleLike, addComment, deleteComment } = require('../controllers/blogController');
+const { createBLog, getBLogs, getBLog, getMyBlogs, updateBLog, deleteBLog, toggleLike, addComment, deleteComment } = require('../controllers/blogController');
 const router = express.Router();
 
 const userMiddleware = require('../middleware/userMiddleware'); 
@@ -10,6 +10,7 @@ router.post('/', userMiddleware, upload.single('image'), createBLog);
 
 
 router.get('/', getBLogs);
+router.get('/my-posts', userMiddleware, getMyBlogs);
 router.get('/:id', getBLog);
 router.patch('/:id', userMiddleware, updateBLog);
 router.delete('/:id', userMiddleware, deleteBLog);

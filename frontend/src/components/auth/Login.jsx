@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import Button from '../ui/Button'; 
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -33,8 +34,10 @@ const Login = () => {
 
       // Check for errors
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        toast.error(data.message || 'Login failed');
+        return;
       }
+      toast.success('Successfully logged in!');
 
       // Success! Tell Context to save the user
       login(data.user, data.token);

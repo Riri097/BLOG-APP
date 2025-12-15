@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiHeart, FiUser, FiSend } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import CommentList from '../components/blog/CommentList';
 
@@ -28,55 +29,88 @@ const BlogDetails = () => {
     };
     fetchBlog();
   }, [id]);
+// 1. HANDLE DELETE BLOG
+    const handleDeleteBlog = async () => {
+    if (!window.confirm("Are you sure you want to delete this entire story?")) return;
 
-  // 2. HANDLE LIKE
-  const handleLike = async () => {
     const token = localStorage.getItem('token');
-    if (!token) return alert("Please login to like!");
-
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}/like`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+        method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const updatedBlog = await response.json();
-      setBlog(updatedBlog); // Update screen with new like count
-    } catch (error) {
-      console.error("Error liking:", error);
-    }
-  };
-
-  // 3. HANDLE COMMENT SUBMIT
-  const handleComment = async (e) => {
-    e.preventDefault(); // Stop page refresh
-
-    const token = localStorage.getItem('token');
-    if (!token) return alert("Please login to comment!");
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}/comment`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({ text: comment })
-      });
-      
-      const data = await response.json();
 
       if (response.ok) {
-        setBlog(data); // Update the blog with the new comment list
-        setComment(''); // Clear the text box
+        toast.success("Story deleted successfully");
+        navigate('/dashboard'); // Go back to dashboard after delete
       } else {
-        console.error("Backend Error:", data);
-        alert("Failed to post comment");
+        toast.error("Failed to delete story");
       }
-
     } catch (error) {
-      console.error("Error commenting:", error);
+      console.error(error);
+      toast.error("Error deleting story");
     }
   };
+
+// 2. HANDLE LIKE
+const handleLike = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) return toast.error("Please login to like!");
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/blogs/${id}/like`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    const updatedBlog = await response.json();
+
+    if (updatedBlog.likes.length > blog.likes.length) {
+      toast.success("Liked!");
+    } else {
+      toast.success("Unliked!");
+    }
+
+    setBlog(updatedBlog); 
+    
+  } catch (error) {
+    console.error("Error liking:", error);
+    toast.error("Something went wrong");
+  }
+};
+
+// 3. HANDLE COMMENT
+const handleComment = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  if (!token) return toast.error("Please login to comment!");
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/blogs/${id}/comment`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify({ text: comment })
+    });
+    
+    const data = await response.json();
+
+    if (response.ok) {
+      setBlog(data); // Update the blog with the new comment list
+      setComment(''); // Clear the text box
+      toast.success("Comment posted!");
+    } else {
+      console.error("Backend Error:", data);
+      toast.error(data.message || "Failed to post comment");
+    }
+
+  } catch (error) {
+    console.error("Error commenting:", error);
+    toast.error("Something went wrong");
+  }
+};
 
   // 4. HANDLE COMMENT DELETE
   const handleDeleteComment = async (commentId) => {
@@ -95,11 +129,13 @@ const BlogDetails = () => {
                 ...prev,
                 comments: prev.comments.filter(c => c._id !== commentId)
             }));
+            toast.success("Comment deleted");
         } else {
-            alert("Failed to delete comment");
+            toast.error("Failed to delete comment");
         }
     } catch (error) {
         console.error("Error deleting comment:", error);
+        toast.error("Something went wrong");
     }
   };
 

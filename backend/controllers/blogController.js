@@ -48,6 +48,19 @@ async function getBLogs(req, res){
     }
 }
 
+// Get blogs of logged-in user
+const getMyBlogs = async (req, res) => {
+    try {
+        const blogs = await Blog.find({ user: req.userId })
+            .populate('user', 'name')
+            .sort({ createdAt: -1 });
+            
+        res.json(blogs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Get a single blog by ID
 async function getBLog(req, res){
     try {
@@ -188,6 +201,7 @@ module.exports = {
     createBLog,
     getBLogs,
     getBLog,
+    getMyBlogs,
     updateBLog,
     deleteBLog,
     toggleLike,

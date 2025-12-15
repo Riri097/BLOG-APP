@@ -3,9 +3,8 @@ import { useAuth } from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-
-// 1. IMPORT THE BLOG CARD
 import BlogCard from '../components/blog/BlogCard'; 
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -13,11 +12,36 @@ const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 1. KEEP THIS ONE (The Logic)
+  const handleDelete = async (blogId) => {
+    if (!window.confirm("Are you sure you want to delete this story?")) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/blogs/${blogId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        toast.success("Story deleted");
+        // Remove from UI immediately
+        setPosts(posts.filter(post => post._id !== blogId));
+      } else {
+        const data = await response.json();
+        toast.error(data.message || "Failed to delete");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting story");
+    }
+  };
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/blogs', {
+        const response = await fetch('http://localhost:5000/api/blogs/my-posts', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -29,11 +53,9 @@ const Dashboard = () => {
         
         const data = await response.json();
 
-// --- ADD THIS LINE ---
-console.log("Fetched Posts Data:", data); 
-// --------------------
-
-        if (response.ok) setPosts(data);
+        if (response.ok) {
+          setPosts(data);
+        }
 
       } catch (error) {
         console.error("Failed to fetch posts", error);
@@ -41,9 +63,9 @@ console.log("Fetched Posts Data:", data);
         setLoading(false);
       }
     };
+    if(user) fetchPosts();
+  }, [user]);
 
-    fetchPosts();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -68,7 +90,7 @@ console.log("Fetched Posts Data:", data);
           </Card>
         </div>
 
-        {/* 2. BLOG GRID SECTION (Replaced the old list) */}
+        {/* Blog Grid */}
         <div className="mt-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Latest Stories</h2>
 
@@ -79,18 +101,14 @@ console.log("Fetched Posts Data:", data);
               <p>No posts yet.</p>
             </div>
           ) : (
-            // GRID LAYOUT: 1 column on mobile, 2 on tablet, 3 on desktop
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <BlogCard key={post._id} blog={post} />
-              ))}
-            </div>
-          )}
-        </div>
-
-      </div>
-    </div>
-  );
+<BlogCard key={post._id} blog={post} onDelete={handleDelete} />
+))}
+</div>
+)}
+</div>  </div>
+</div>);
 };
 
 export default Dashboard;
