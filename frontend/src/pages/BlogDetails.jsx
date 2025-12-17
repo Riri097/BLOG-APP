@@ -147,15 +147,17 @@ const handleComment = async (e) => {
       
       {/* --- IMAGE --- */}
       {blog.image && (
-        <img 
-          src={`http://localhost:5000${blog.image}`} 
-          alt={blog.title} 
-          className="w-full h-80 object-cover rounded-2xl shadow-md mb-8"
-        />
+        <div className="w-full h-96 md:h-[500px] relative">
+            <img 
+              src={`http://localhost:5000${blog.image}`} 
+              alt={blog.title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
       )}
 
       {/* --- HEADER --- */}
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">{blog.title}</h1>
+      <h1 className="text-4xl font-bold text-dark mb-4 mt-2">{blog.title}</h1>
       
       <div className="flex items-center justify-between mb-8 border-b pb-6">
         <div className="flex items-center gap-3">
@@ -163,7 +165,7 @@ const handleComment = async (e) => {
             <FiUser />
           </div>
           <div>
-            <p className="font-bold text-gray-800">{blog.user?.name || "Unknown Author"}</p>
+            <p className="font-bold text-dark">{blog.user?.name || "Unknown Author"}</p>
             <p className="text-sm text-gray-500">{new Date(blog.createdAt).toDateString()}</p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 
 const ActionButtons = ({ isOwner, blogId, onDelete }) => {
+  console.log("ActionButtons ID:", blogId); 
   // 1. If not owner, render nothing (Clean!)
   if (!isOwner) return null;
 
@@ -10,7 +11,7 @@ const ActionButtons = ({ isOwner, blogId, onDelete }) => {
       
       {/* Edit Button */}
       <Link 
-        to={`/edit-blog/${blogId}`}
+        to={`/edit-post/${blogId}`}
         onClick={(e) => e.stopPropagation()} // Prevent opening the card
         className="text-blue-500 hover:bg-blue-50 p-2 rounded-full transition"
         title="Edit Story"

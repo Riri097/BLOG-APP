@@ -1,4 +1,5 @@
 const { Blog } = require('../models/blogModel'); 
+const mongoose = require('mongoose');
 
 // Create a new blog
 async function createBLog(req, res){
@@ -83,18 +84,41 @@ async function getBLog(req, res){
 // Update a blog by ID
 async function updateBLog(req, res){
     try{
-        // {new: true} returns the updated blog from db
-        const{id} = req.params;
+        const { id } = req.params;
 
-        const blog = await Blog.findByIdAndUpdate(id, req.body, {new: true});
-        if (!blog){
-            return res.status(404).json({message: 'Blog not found'})
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            console.log("Error: Invalid ID");
+            return res.status(404).json({ message: 'No such blog' });
         }
 
-        res.json(blog); 
+        const blog = await Blog.findById(id);
+        if (!blog) {
+            console.log("Error: Blog not found");
+            return res.status(404).json({ message: 'Blog not found' });
+        }
+        
+        // Check Ownership
+        if (blog.user.toString() !== req.userId) {
+            console.log("Error: Permission denied (IDs do not match)");
+            return res.status(403).json({ message: "You can only update your own posts!" });
+        }
+
+        let updateData = {
+            title: req.body.title,
+            content: req.body.content,
+        };
+
+        if (req.file) {
+            updateData.image = `/uploads/${req.file.filename}`;
+        }
+
+        const updatedBlog = await Blog.findByIdAndUpdate(id, updateData, { new: true });
+        
+        res.json(updatedBlog); 
 
     }catch(error){
-        res.status(500).json({message: error.message})
+        console.error("CRASH:", error);
+        res.status(500).json({ message: error.message })
     }
 }
 

@@ -12,7 +12,7 @@ router.post('/', userMiddleware, upload.single('image'), createBLog);
 router.get('/', getBLogs);
 router.get('/my-posts', userMiddleware, getMyBlogs);
 router.get('/:id', getBLog);
-router.patch('/:id', userMiddleware, updateBLog);
+router.put('/:id', userMiddleware, upload.single('image'), updateBLog); 
 router.delete('/:id', userMiddleware, deleteBLog);
 
 router.put('/:id/like', userMiddleware, toggleLike);

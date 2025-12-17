@@ -1,28 +1,43 @@
 import { Outlet } from 'react-router-dom';
-import Sidebar from "./Sidebar";
+import { useAuth } from '../../hooks/useAuth';
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 const Layout = () => {
-    return(
-    // 1. Use a Flex container to put things side-by-side
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
-      
-      {/* 2. Sidebar Wrapper 
-          We wrap the Sidebar in a div with a specific width (w-64).
-          This forces the layout to reserve space for it. 
-      */}
-      <div className="w-64 flex-shrink-0 h-full">
-        <Sidebar />
-      </div>
+  const { user } = useAuth();
 
-      {/* 3. Main Content Area 
-          flex-1 means "take up all remaining space".
-          overflow-y-auto means "scroll this part if content is long".
-      */}
-      <main className="flex-1 overflow-y-auto p-8">
-        <Outlet /> 
-      </main>
+  // --- SCENARIO 1: LOGGED IN USER ---
+  // Shows Sidebar on the left, Content on the right. No Footer.
+  if (user) {
+    return (
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
+        {/* Sidebar stays fixed */}
+        <Sidebar />
+        
+        {/* Main Content scrolls independently */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-5xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // --- SCENARIO 2: GUEST ---
+  // Shows Navbar on top, Content in middle, Footer at bottom.
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
       
+      <main className="flex-grow bg-white">
+        <Outlet />
+      </main>
+
+      <Footer />
     </div>
-    )
-}
+  );
+};
+
 export default Layout;

@@ -107,7 +107,7 @@ const updateAccount = async (req, res) => {
     })
 
    }catch(error){
-    req.status(500).json({message: 'Server error', error:error.message});
+    res.status(500).json({message: 'Server error', error:error.message});
    }
 };
 
@@ -119,12 +119,12 @@ const deleteAccount = async (req, res) => {
         if (!deleteUser){
             return res.status(404).json({message:'User not found'});
         }
-
+        
         res.json({message: 'Account deleted successfully'});
 
 
     }catch(error){
-        req.status(500).json({message: 'Server error', error: error.message})
+        res.status(500).json({message: 'Server error', error: error.message})
     }
 };
 
